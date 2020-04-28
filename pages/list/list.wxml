@@ -1,0 +1,32 @@
+<view class="weui-panel">
+  <view class="page__bd">
+    <view class='item' wx:for="{{listData}}" wx:key="{{i}}">
+      <view class="weui-cells">
+        <mp-slideview buttons="{{slideButtons}}" bindbuttontap="slideButtonTap">
+          <view class="weui-form-preview b_g_c">
+            <view class="weui-form-preview__hd">
+              <view class="weui-form-preview__item">
+                <label class="weui-form-preview__label">金额</label>
+                <em class="weui-form-preview__value">¥ {{item.money}}</em>
+              </view>
+            </view>
+            <view class="weui-form-preview__bd">
+              <view class="weui-form-preview__item">
+                <label class="weui-form-preview__label">类型</label>
+                <text class="weui-form-preview__value">{{item.type}}</text>
+                </view>
+                <view class="weui-form-preview__item">
+                  <label class="weui-form-preview__label">备注</label>
+                  <text class="weui-form-preview__value">{{item.tips}}</text>
+                </view>
+                <view class="weui-form-preview__item">
+                  <label class="weui-form-preview__label">时间</label>
+                  <text class="weui-form-preview__value">{{item.date}}</text>
+                </view>
+              </view>
+          </view>
+        </mp-slideview>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/list/list",
+    "pages/home/home",
+    "pages/login/login",
+    "pages/logs/logs",
+    "pages/charts/charts"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "tabBar": {
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "记录",
+        "selectedIconPath": "icons/select-edit.png",
+        "iconPath": "icons/edit.png"
+      },
+      {
+        "pagePath": "pages/list/list",
+        "text": "详细",
+        "selectedIconPath": "icons/select-Viewlist.png",
+        "iconPath": "icons/Viewlist.png"
+      },
+      {
+        "pagePath": "pages/charts/charts",
+        "text": "图表",
+        "selectedIconPath": "icons/select-pic.png",
+        "iconPath": "icons/pic.png"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "我的",
+        "selectedIconPath": "icons/select-account.png",
+        "iconPath": "icons/account.png"
+      }
+    ]
+  }
+}

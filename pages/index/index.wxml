@@ -1,0 +1,27 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover" bindtap="showDialog"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+  <view class="usermotto">
+    <text class="user-motto">{{motto}} {{userInfo.nickName}}</text>
+  </view>
+  <view class="usermotto">
+    <button hover-class="button-hover" class="btn-top" bindtap="addRecord">
+      <icon class="iconfont iconedit icon-top"></icon> 添加记录
+    </button>
+    <button hover-class="button-hover" class="btn-top" bindtap="viewDetail">
+      <icon class="iconfont iconviewlist icon-top"></icon> 查看详细
+    </button>
+    <button hover-class="button-hover" class="btn-top" bindtap="viewChart">
+      <icon class="iconfont iconpic icon-top"></icon> 查看图表
+    </button>
+  </view>
+  <mp-dialog title="登出" show="{{showLogout}}" bindbuttontap="clickLogout" buttons="{{buttons}}">
+    <view>确定要退出登陆么？</view>
+  </mp-dialog>
+</view>
