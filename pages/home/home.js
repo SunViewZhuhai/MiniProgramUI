@@ -1,72 +1,52 @@
 // pages/home/home.js
+const app = getApp()
 Page({
   data: {
-    data: {},
-    types:['餐食','饮品','其他'],
-    typeIndex: 0,
-    selectTypes: '',
-    date: '',
-    tips: '',
-    money: null,
-    showAdd: false,
-    buttons: [{text: '取消'}, {text: '确定'}]
+    slideButtons: [{
+      type: 'warn',
+      text: '删除',
+    }],
+    orderList: [
+      {
+        id: 1,
+        creationTime: '2020-04-20',
+        creator: 'ddd'
+      },
+      {
+        id: 2,
+        creationTime: '2020-04-18',
+        creator: 'ccc'
+      }
+    ]
   },
-  bindTypeChange(e) {
-    this.setData({
-      typeIndex: e.detail.value,
-      selectTypes: this.data.types[this.data.typeIndex]
+  jump(e) {
+    let id = e.currentTarget.dataset.id.id
+    let date = e.currentTarget.dataset.id.creationTime
+    wx.navigateTo({
+      url:`/pages/order/order?id=${id}&date=${date}`
     })
   },
-  bindDateChange(e) {
-    this.setData({
-      date: e.detail.value
-    })
+  slideButtonTap(e) {
+    console.log(e.currentTarget.dataset.id)
   },
-  tipsInputChange(e) {
-    this.setData({
-      tips: e.detail.value
-    })
+  addOrder() {
+    let date = new Date()
+    console.log(this.formatDate(date))
+    console.log(app.globalData.userInfo.nickName)
   },
-  moneyInputChange(e) {
-    this.setData({
-      money: e.detail.value
-    })
-  },
-  submitForm() {
-    if (!(this.data.date && this.data.selectTypes && this.data.money)) {
-      this.setData({
-        error: '不能为空，请核查'
-      })
+  formatDate(date) {
+    let strDate = date.getFullYear() + "-"
+    if(date.getMonth() < 10) {
+      let s = date.getMonth() + 1 + "-"
+      strDate += "0" + s;
     }
-    else {
-      this.setData({
-        showAdd: true
-      })
-    }
-  },
-  clickAdd(e) {
-    this.setData({
-      showAdd: false
-    })
-    if(e.detail.item.text == '确定') {
-      this.setData({
-        data: {
-          date: this.data.date,
-          selectTypes: this.data.selectTypes,
-          tips: this.data.tips,
-          money: this.data.money,
-        }
-      })
-      wx.switchTab({ //跳转list
-        url:"/pages/list/list"
-      })
-    }
-    this.setData({
-      date: '',
-      selectTypes: '',
-      tips: '',
-      money: null
-    })
+    else 
+      strDate += date.getMonth() + 1 + "-"
+    if(date.getDate() < 10)
+      strDate += "0" + date.getDate()
+    else 
+      strDate += date.getDate()
+    return strDate
   },
 
   /**

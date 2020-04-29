@@ -11,12 +11,14 @@ Page({
     }],
     listData: [
       {
+        id: 1,
         money: 24,
         type: '餐食',
         tips: '午饭',
         date: '2020-04-21',
       },
       {
+        id: 2,
         money: 4,
         type: '饮品',
         tips: '可乐',
@@ -25,7 +27,17 @@ Page({
     ]
   },
   slideButtonTap(e) {
-    console.log('slide button tap', e.detail)
+    console.log(e.currentTarget.dataset.id)
+  },
+  jump(e) {
+    let id = e.currentTarget.dataset.id.id
+    let date = e.currentTarget.dataset.id.date
+    let money = e.currentTarget.dataset.id.money
+    let type = e.currentTarget.dataset.id.type
+    let tips = e.currentTarget.dataset.id.tips
+    wx.navigateTo({
+      url:`/pages/edit/edit?id=${id}&date=${date}&money=${money}&type=${type}&tips=${tips}`
+    })
   },
   /**
    * 生命周期函数--监听页面加载

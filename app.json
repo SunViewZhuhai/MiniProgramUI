@@ -5,7 +5,9 @@
     "pages/home/home",
     "pages/login/login",
     "pages/logs/logs",
-    "pages/charts/charts"
+    "pages/charts/charts",
+    "pages/order/order",
+    "pages/edit/edit"
   ],
   "window": {
     "backgroundTextStyle": "light",

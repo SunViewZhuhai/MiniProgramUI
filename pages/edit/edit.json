@@ -4,8 +4,7 @@
     "mp-cell": "/weui-miniprogram/cell/cell",
     "mp-dialog": "../weui-miniprogram/dialog/dialog",
     "mp-toptips": "../weui-miniprogram/toptips/toptips",
-    "mp-slideview": "../weui-miniprogram/slideview/slideview",
     "mp-form": "../weui-miniprogram/form/form"
   },
-  "navigationBarTitleText": "订单记录"
+  "navigationBarTitleText": "修改详细"
 }

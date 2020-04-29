@@ -1,1 +1,4 @@
 /* pages/home/home.wxss */
+.b_g_c {
+    background-color: #E3F2FD;
+}
