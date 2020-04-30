@@ -1,19 +1,21 @@
+const app = getApp();
 Page({
   data: {
     postData: {},
-    types:['餐食','饮品','其他'],
+    types:[],
     typeIndex: null,
-    selectTypes: '',
+    orderId: null,
+    selectType: {},
     date: '',
     tips: '',
     money: null,
     showAdd: false,
-    buttons: [{text: '取消'}, {text: '确定'}]
+    buttons: [{text: '取消'}, {text: '确定'}],
   },
   bindTypeChange(e) {
     this.setData({
       typeIndex: e.detail.value,
-      selectTypes: this.data.types[e.detail.value]
+      selectType: this.data.types[e.detail.value]
     })
   },
   bindDateChange(e) {
@@ -32,7 +34,7 @@ Page({
     })
   },
   submitForm() {
-    if (!(this.data.date && this.data.selectTypes && this.data.money)) {
+    if (!(this.data.date && this.data.selectType && this.data.money)) {
       this.setData({
         error: '不能为空，请核查'
       })
@@ -59,21 +61,26 @@ Page({
     if(e.detail.item.text == '确定') {
       this.setData({
         postData: {
-          date: this.data.date,
-          selectTypes: this.data.selectTypes,
+          //date: this.data.date,
+          selectType: this.data.selectType.id,
           tips: this.data.tips,
           money: this.data.money,
         }
       })
       //上传数据
       this.cancle()
+      this.setData({
+        date: '',
+        selectType: '',
+        tips: '',
+        money: null
+      })
     }
-    this.setData({
-      date: '',
-      selectTypes: '',
-      tips: '',
-      money: null
-    })
+    else{
+      this.setData({
+        showAdd: false
+      })
+    }    
   },
   // getData(data) {
   //   wx.request({
@@ -95,12 +102,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options.id)
-    console.log(options.date)
     this.setData({
-      date: options.date
+      orderId: options.orderid,
+      date: options.date,
+      types: app.globalData.orderItemCategories
     })
-    // this.getData(options.id)
   },
 
   /**

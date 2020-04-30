@@ -32,8 +32,23 @@ App({
         }
       }
     })
+
+    //get order item category
+    wx.request({
+      url: this.globalData.host + 'api/ItemCategory',
+      method: "GET",
+      success: res => {
+        console.log(res.data)
+        this.globalData.orderItemCategories = res.data
+      },
+      fail:err => {
+        console.log(err.message)
+      }
+    })
   },
   globalData: {
-    userInfo: null
+    host:"https://localhost:44335/",
+    userInfo: null,
+    orderItemCategories:[]
   }
 })

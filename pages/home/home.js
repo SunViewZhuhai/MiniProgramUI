@@ -23,7 +23,7 @@ Page({
     let id = e.currentTarget.dataset.id.id
     let date = e.currentTarget.dataset.id.creationTime
     wx.navigateTo({
-      url:`/pages/order/order?id=${id}&date=${date}`
+      url:`/pages/order/order?orderid=${id}&date=${date}`
     })
   },
   slideButtonTap(e) {
