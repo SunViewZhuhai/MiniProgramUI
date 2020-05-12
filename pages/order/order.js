@@ -1,21 +1,24 @@
 const app = getApp();
 Page({
   data: {
-    postData: {},
+    toptip: {
+      msg: '',
+      type: '',
+      show: false
+    },
     types:[],
     typeIndex: null,
     orderId: null,
-    selectType: {},
-    date: '',
+    selectTypeId: null,
     tips: '',
     money: null,
     showAdd: false,
-    buttons: [{text: '取消'}, {text: '确定'}],
+    buttons: [{text: '取消', isConfirm: false}, {text: '确定', isConfirm: true}],
   },
   bindTypeChange(e) {
     this.setData({
       typeIndex: e.detail.value,
-      selectType: this.data.types[e.detail.value]
+      selectTypeId: this.data.types[e.detail.value].id
     })
   },
   bindDateChange(e) {
@@ -34,9 +37,13 @@ Page({
     })
   },
   submitForm() {
-    if (!(this.data.date && this.data.selectType && this.data.money)) {
+    if (!(this.data.selectTypeId && this.data.money)) {
       this.setData({
-        error: '不能为空，请核查'
+        toptip: {
+          msg: '不能为空，请核查',
+          type: 'error',
+          show: true
+        }
       })
     }
     else {
@@ -45,12 +52,13 @@ Page({
       })
     }
   },
-  cancle() {
+  cancel() {
     let pages = getCurrentPages();
     let beforePage = pages[pages.length - 2];
     wx.navigateBack({
+      delta: 2,
       success: function () {
-        beforePage.onLoad();
+
       }
     });
   },
@@ -58,23 +66,22 @@ Page({
     this.setData({
       showAdd: false
     })
-    if(e.detail.item.text == '确定') {
-      this.setData({
-        postData: {
-          //date: this.data.date,
-          selectType: this.data.selectType.id,
-          tips: this.data.tips,
-          money: this.data.money,
-        }
-      })
-      //上传数据
-      this.cancle()
-      this.setData({
-        date: '',
-        selectType: '',
-        tips: '',
-        money: null
-      })
+    if(e.detail.item.isConfirm) {
+      wx.request({
+        url: app.globalData.host + 'api/OrderDetail/AddOrderDetail',
+        method: 'POST',
+        data:{
+          orderItemName: this.data.tips,
+          price: this.data.money,
+          orderId: this.data.orderId,
+          categoryId: this.data.selectTypeId,
+          consumerId: app.globalData.loginUser.id
+        },
+        success: (res)=>{         
+          this.cancel()
+        },
+        fail: ()=>{},
+      })     
     }
     else{
       this.setData({
@@ -104,7 +111,6 @@ Page({
   onLoad: function (options) {
     this.setData({
       orderId: options.orderid,
-      date: options.date,
       types: app.globalData.orderItemCategories
     })
   },

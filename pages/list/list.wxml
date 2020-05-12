@@ -1,27 +1,28 @@
+<wxs module="util" src="../../utils/util.wxs"></wxs>
 <view class="weui-panel">
   <view class="page__bd">
-    <view class='item' wx:for="{{listData}}" wx:key="{{i}}" bindtap="jump" data-id='{{item}}'>
+    <view class='item' wx:for="{{listData}}" wx:key="{{item.id}}" bindtap="jump" data-option='{{item}}'>
       <view class="weui-cells">
         <mp-slideview buttons="{{slideButtons}}" bindbuttontap="slideButtonTap" data-id='{{item.id}}'>
           <view class="weui-form-preview b_g_c">
             <view class="weui-form-preview__hd">
               <view class="weui-form-preview__item">
                 <label class="weui-form-preview__label">金额</label>
-                <em class="weui-form-preview__value">¥ {{item.money}}</em>
+                <em class="weui-form-preview__value">¥ {{item.price}}</em>
               </view>
             </view>
             <view class="weui-form-preview__bd">
               <view class="weui-form-preview__item">
                 <label class="weui-form-preview__label">类型</label>
-                <text class="weui-form-preview__value">{{item.type}}</text>
+                <text class="weui-form-preview__value">{{util.getObjectByid(item.categoryId, orderItemCategories).category}}</text>
                 </view>
                 <view class="weui-form-preview__item">
                   <label class="weui-form-preview__label">备注</label>
-                  <text class="weui-form-preview__value">{{item.tips}}</text>
+                  <text class="weui-form-preview__value">{{item.orderItemName}}</text>
                 </view>
                 <view class="weui-form-preview__item">
                   <label class="weui-form-preview__label">时间</label>
-                  <text class="weui-form-preview__value">{{item.date}}</text>
+                  <text class="weui-form-preview__value">{{util.formatTime(item.orderDate)}}</text>
                 </view>
               </view>
           </view>

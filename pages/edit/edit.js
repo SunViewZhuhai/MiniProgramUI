@@ -1,24 +1,18 @@
+const app = getApp();
 // pages/edit/edit.js
 Page({
   data: {
-    postData: {},
-    types:['餐食','饮品','其他'],
+    types: [],
     typeIndex: null,
-    selectTypes: '',
-    date: '',
+    selectTypeId: null,
     tips: '',
     money: null,
-    buttons: [{text: '取消'}, {text: '确定'}]
+    id:null,
   },
   bindTypeChange(e) {
     this.setData({
       typeIndex: e.detail.value,
-      selectTypes: this.data.types[e.detail.value]
-    })
-  },
-  bindDateChange(e) {
-    this.setData({
-      date: e.detail.value
+      selectTypeId: this.data.types[e.detail.value].id
     })
   },
   tipsInputChange(e) {
@@ -32,22 +26,33 @@ Page({
     })
   },
   submitForm() {
-    if (!(this.data.date && this.data.selectTypes && this.data.money)) {
+    if (!(this.data.selectTypeId && this.data.money)) {
       this.setData({
-        error: '不能为空，请核查'
+        toptip: {
+          msg: '不能为空，请核查',
+          type: 'error',
+          show: true
+        }
       })
     }
     else {
-      this.setData({
-        postData: {
-          date: this.data.date,
-          selectTypes: this.data.selectTypes,
-          tips: this.data.tips,
-          money: this.data.money,
-        }
-      })
-      //上传数据
-      this.cancle()
+      wx.request({
+        url: app.globalData.host + 'api/OrderDetail/UpdateOrderDetail',
+        method: 'PUT',
+        data:{
+          id: this.data.id,
+          orderDate: this.data.date,
+          orderItemName: this.data.tips,
+          price: this.data.money,
+          orderId: this.data.orderId,
+          categoryId: this.data.selectTypeId,
+          consumerId: app.globalData.loginUser.id
+        },
+        success: (res)=>{
+          this.cancle()     
+        },
+        fail: ()=>{},
+      })           
     }
   },
   cancle() {
@@ -55,71 +60,22 @@ Page({
     let beforePage = pages[pages.length - 2];
     wx.navigateBack({
       success: function () {
-        beforePage.onLoad();
+        // beforePage.onLoad();
+        this.delta = 2
       }
     });
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad: function (options) {
     this.setData({
-      date: options.date,
-      selectTypes: options.type,
-      typeIndex: options.type == '餐食' ? 0 : options.type == '饮品' ? 1 : 2,
+      types: app.globalData.orderItemCategories,
+      selectTypeId: app.globalData.orderItemCategories.find(x => x.id == options.typeId).id,
+      typeIndex: app.globalData.orderItemCategories.findIndex(x => x.id == options.typeId),
       tips: options.tips,
       money: options.money,
       id: options.id,
+      consumerId: options.consumerId,
+      orderId: options.orderId,
     })
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  }
 })

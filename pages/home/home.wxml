@@ -1,19 +1,20 @@
+<wxs module="util" src="../../utils/util.wxs"></wxs>
 <!--pages/home/home.wxml-->
 <view class="page">
   <button class="weui-btn" type="primary" bindtap="addOrder">添加订单</button>
   <!-- <button class="weui-btn" type="primary" bindtap="jump">跳</button> -->
-  <view class='item' wx:for="{{orderList}}" wx:key="{{i}}" bindtap="jump" data-id='{{item}}'>
+  <view class='item' wx:for="{{orderList}}" wx:key="id" bindtap="jump" data-id='{{item.id}}'>
     <view class="weui-cells">
       <mp-slideview buttons="{{slideButtons}}" bindbuttontap="slideButtonTap" data-id='{{item.id}}'>
         <view class="weui-form-preview b_g_c">
           <view class="weui-form-preview__bd">
             <view class="weui-form-preview__item">
               <label class="weui-form-preview__label">创建时间</label>
-              <text class="weui-form-preview__value">{{item.creationTime}}</text>
+              <text class="weui-form-preview__value">{{util.formatTime(item.orderDate)}}</text>
             </view>
             <view class="weui-form-preview__item">
               <label class="weui-form-preview__label">创建人</label>
-              <text class="weui-form-preview__value">{{item.creator}}</text>
+              <text class="weui-form-preview__value">{{item.prepayerName}}</text>
             </view>
           </view>
         </view>

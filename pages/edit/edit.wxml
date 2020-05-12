@@ -1,16 +1,16 @@
 <!--pages/edit/edit.wxml-->
 <view class="page">
-<mp-toptips msg="{{error}}" type="error" show="{{error}}"></mp-toptips>
+<mp-toptips msg="{{toptip.msg}}" type="{{toptip.type}}" show="{{toptip.show}}"></mp-toptips>
 <mp-form>
   <mp-cells>
-    <mp-cell prop="date" title="日期" ext-class="">
+    <!-- <mp-cell prop="date" title="日期" ext-class="">
       <picker data-field="date" mode="date" value="{{date}}" start="2020-01-01" end="2020-12-31" bindchange="bindDateChange">
         <view class="weui-input">{{date}}</view>
       </picker>
-    </mp-cell>
+    </mp-cell> -->
     <mp-cell prop="type" title="类型" ext-class="">
-      <picker mode="selector" bindchange="bindTypeChange" value="{{typeIndex}}" range="{{types}}">
-        <view class="weui-input">{{selectTypes}}</view>
+      <picker mode="selector" bindchange="bindTypeChange" value="{{typeIndex}}" range="{{types}}" range-key="category">
+        <view class="weui-input">{{types[typeIndex].category}}</view>
       </picker>
     </mp-cell>
     <mp-cell prop="tips" title="备注" ext-class="">
