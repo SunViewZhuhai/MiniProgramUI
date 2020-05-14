@@ -4,24 +4,20 @@ var util = require('../../utils/util.js')
 const app = getApp()
 var chart = null // echart instance
 var defaultOption = {
-  color: ['#FF4500', '#00BFFF', '#228B22','#FFFF00'],
   tooltip: {
     trigger: 'axis',
     axisPointer: {            // 坐标轴指示器，坐标轴触发有效
       type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
     }
   },
-  legend: {
-    data: ['餐食', '饮品', '其他']
-  },
+  legend: {},
   grid: {
-    left: 20,
-    right: 20,
-    bottom: 15,
-    top: 40,
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
     containLabel: true
   },
-  xAxis: [
+  xAxis: 
     {
       type: 'value',
       axisLine: {
@@ -32,13 +28,11 @@ var defaultOption = {
       axisLabel: {
         color: '#666'
       }
-    }
-  ],
-  yAxis: [
+    },
+  yAxis:
     {
       type: 'category',
       axisTick: { show: false },
-      data: ['04-10', '04-11', '04-12', '04-13', '04-14', '04-15', '04-16'],
       axisLine: {
         lineStyle: {
           color: '#999'
@@ -47,59 +41,15 @@ var defaultOption = {
       axisLabel: {
         color: '#666'
       }
-    }
-  ],
+    },
   series: [
-    {
-      name: '餐食',
-      type: 'bar',
-      stack: '总量',
-      label: {
-        normal: {
-          show: true
-        }
-      },
-      data: [20, 10, 14, 17, 19, 25, 22],
-      itemStyle: {
-        // emphasis: {
-        //   color: '#32c5e9'
-        // }
-      }
-    },
-    {
-      name: '饮品',
-      type: 'bar',
-      stack: '总量',
-      label: {
-        normal: {
-          show: true,
-        }
-      },
-      data: [20, 32, 21, 34, 9, 13, 11],
-      itemStyle: {
-        // emphasis: {
-        //   color: '#67e0e3'
-        // }
-      }
-    },
-    {
-      name: '其他',
-      type: 'bar',
-      stack: '总量',
-      label: {
-        normal: {
-          show: true,
-          position: 'inside'
-        }
-      },
-      data: [3, 2, 3, 4, 3, 3, 3],
-      itemStyle: {
-        // emphasis: {
-        //   color: '#37a2da'
-        // }
-      }
-    },
-  ]
+    {type: 'bar', stack: 'sum',}
+  ],
+  dataset: {
+    source: [
+        
+    ]
+  },
 };
 
 Page({
@@ -109,7 +59,6 @@ Page({
       lazyLoad: true
     },
     types:[],
-    orderItemList:[],
     option:{},
   },
   loadOrderItemlist(){
@@ -117,16 +66,15 @@ Page({
       url: app.globalData.host + 'api/OrderDetail/GetOrderItemList/'+ app.globalData.loginUser.id,
       method: 'GET',
       success: res => {
-        this.setData({
-          orderItemList: res.data
-        })        
+        console.log(this.sum(res.data,x => x.price))
+        this.updateChart(res.data)
       },
       fail:err => {
         console.log(err)
       }
     })
   },
-  init(){
+  initChart(){
     this.ecComponent.init((canvas, width, height, dpr) => {
       const chart = echarts.init(canvas, null, {
         width: width,
@@ -141,16 +89,13 @@ Page({
       return chart;
     }); 
   },
-  prepareData(){
-    let option = {}
-    //option.legend = this.data.types.map(x => new {id: x.id, name: x.category})
-    option.legend = defaultOption.legend
-    option.xAxis = defaultOption.xAxis
-    option.yAxis = defaultOption.yAxis
-    option.tooltip = defaultOption.tooltip
-    option.grid = defaultOption.grid
-    option.color = defaultOption.color
-    option.series = defaultOption.series   
+  initDefaultSetting(){
+    let option = {...defaultOption}
+    let len = this.data.types.length
+    option.series = []
+    for(var i=0;i<len;i++){
+      option.series.push(...defaultOption.series)
+    }
     this.setData({ option: option})
   },
   setOption(chart){
@@ -159,12 +104,78 @@ Page({
   onLoad() {
     this.setData({
       types: app.globalData.orderItemCategories
-    })   
-    this.loadOrderItemlist()
+    })
+
   },
   onReady() {
     this.ecComponent = this.selectComponent('#mychart-dom-bar');
-    this.prepareData()
-    this.init()
+    this.initDefaultSetting()
+    this.initChart()
+    // after chart init
+    this.loadOrderItemlist()
   },
+  constructDataset(data){
+    let typeDic = {}
+    this.data.types.map(x => typeDic[x.id]= x.category)
+    let cleanData = data.map((x) =>  {
+      return{
+        date: x.orderDate,
+        type: x.categoryId,
+        price: x.price
+      }
+    })
+    
+    //merge data 
+    var groups = util.groupBy(cleanData, p => util.dateFormat(new Date(p.date), "MM-dd"))
+    let list = []
+    Object.keys(groups).forEach(x => {
+      //date
+      let item  = this.createDefaultDatasetItem()
+      item.date = x
+      let groups2 = util.groupBy(groups[x], p => p.type)
+      Object.keys(groups2).forEach(y => {
+        //merge same type data
+        let type = typeDic[y]
+        item[type] = this.sum(groups2[y],p => p.price)
+        //add to object    
+      })
+      list.push(item)
+    })
+    return list
+  },
+  createDefaultDatasetItem(){
+    let item = {}
+    item.date = null
+    this.data.types.forEach(x => item[x.category] = 0)
+    return item
+  },
+  sum(list, fn){
+    let sum = 0
+    list.forEach((item) => {
+      sum += fn(item)
+    })
+    return sum
+  },
+  updateChart(data){
+    let dataset = this.constructDataset(data)
+    this.fillEmptyDate(dataset)
+    dataset.sort((a,b) => {
+      return a.date < b.date ?  -1 :  1
+    })
+    this.data.option.dataset.source = dataset
+    this.setOption(this.chart) 
+  },
+  fillEmptyDate(dataset){
+    let range = util.getDateRange(new Date(),7,true,"MM-dd")
+    let emptyDate = []
+    for (let date of range){
+      if(dataset.some(x => x.date == date)){
+        continue;
+      }
+      let newItem = this.createDefaultDatasetItem()
+      newItem.date = date
+      emptyDate.push(newItem)
+    }
+    dataset.push(...emptyDate)
+  }
 });

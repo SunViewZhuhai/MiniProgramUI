@@ -36,7 +36,30 @@ const dateFormat = (date, format) => {
   return format;
 }
 
+const getDateRange = (startDate, len, isPast, format) => {
+  let sign = isPast ? -1 : 1
+  let list = []
+  for(var i=0;i<len;i++){
+    let temp = new Date(startDate.valueOf())
+    temp.setDate(temp.getDate() + i * sign)
+    list.push(temp)
+  }
+  list = list.sort((a,b) => {return a-b}) 
+  return list.map(x => dateFormat(x, format))
+}
+// fn: (param) => { params.property }
+const groupBy = (list, fn) => {
+  const groups = {};
+  list.forEach(function (o) {
+      const group = fn(o);
+      groups[group] = groups[group] || [];
+      groups[group].push(o);
+  });
+  return groups;
+}
 module.exports = {
   formatTime: formatTime,
   dateFormat: dateFormat,
+  getDateRange: getDateRange,
+  groupBy: groupBy
 }
